@@ -1,0 +1,203 @@
+<html>
+
+<head>
+    <link href="bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" />
+    <link href="bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" />
+</head>
+
+<body>
+    <a id="acionarModal" data-target="#static" data-toggle="modal"></a>
+    <!-- static -->
+    <div id="static" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title font-blue-economicar bold uppercase">Cabeçalho</h4>
+        </div>
+        <div class="modal-body">
+            <p> </p>
+        </div>
+        <div class="modal-footer">
+            <button id="btnCloseModal" type="button" data-dismiss="modal" class="btn btn-outline dark">Fechar</button>
+        </div>
+    </div>
+
+    <a id="acionarModalStack1" data-target="#stack1" data-toggle="modal"></a>
+    <!-- stackable -->
+    <div id="stack1" class="modal fade" tabindex="-1" data-backdrop="static">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title font-blue-economicar bold uppercase">Stack One</h4>
+        </div>
+        <div class="modal-body">
+            <p> </p>
+        </div>
+        <div class="modal-footer">
+            <button id="btnCloseModal" type="button" data-dismiss="modal" class="btn btn-outline dark">Fechar</button>
+        </div>
+    </div>
+    <a id="acionarModalStack2" data-target="#stack2" data-toggle="modal"></a>
+    <div id="stack2" class="modal fade" tabindex="-1">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title font-blue-economicar bold uppercase">Stack Two</h4>
+        </div>
+        <div class="modal-body">
+            <p> </p>
+        </div>
+        <div class="modal-footer">
+            <button id="btnCloseModal" type="button" data-dismiss="modal" class="btn btn-outline dark">Fechar</button>
+        </div>
+    </div>
+    <a id="acionarModalStack3" data-target="#stack3" data-toggle="modal"></a>
+    <div id="stack3" class="modal fade" tabindex="-1">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            <h4 class="modal-title font-blue-economicar bold uppercase">Stack Three</h4>
+        </div>
+        <div class="modal-body">
+            <p> </p>
+
+        </div>
+        <div class="modal-footer">
+            <button id="btnCloseModal" type="button" data-dismiss="modal" class="btn btn-outline dark">Fechar</button>
+        </div>
+    </div>
+
+</body>
+
+<script src="jquery.min.js" type="text/javascript"></script>
+<script src="bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+<script src="bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+<script src="ui-extended-modals.min.js"></script>
+<script>
+
+    var ExibirModal = function (configuracoes) {
+        /// <summary>Exibe um modal</summary>
+        /// <param name="configuracoes" type="String">Objeto JSON contendo as configurações do modal Ex.: 
+        ///{
+        ///    TextoHeader: "Texto Cabeçalho Modal", 
+        ///    CorpoModal: "Oi",
+        ///    FullWidth:true,
+        ///    Largura:"800px",
+        ///    Altura:"400px",
+        ///    OcultarBotaoFechar:true,
+        ///    EventoPadrao: function(){ 
+        ///                 alert ("Evento Padrão");
+        ///    },
+        ///    Botao: [
+        ///      {
+        ///          Texto: "Salvar",
+        ///          Class: "red",
+        ///          FecharAposAcao: false,
+        ///          Evento: function(){
+        ///              alert("Evento do botão");
+        ///          }
+        ///      }
+        ///    ]
+        ///}
+        ///</param>
+
+        /*
+            Verifica se já existe um modal sendo exibido através disso decide qual modal deve ser exibido
+        */
+        var container = "static";
+        var linkModalAcionar = "acionarModal";
+
+        if ($("#stack2").is(":visible")) {
+            container = "stack3";
+            linkModalAcionar = "acionarModalStack3";
+        }
+        else if ($("#stack1").is(":visible")) {
+            container = "stack2";
+            linkModalAcionar = "acionarModalStack2";
+        }
+        else if ($("#static").is(":visible")) {
+            container = "stack1";
+            linkModalAcionar = "acionarModalStack1";
+        }
+
+        // Prefixo dos id's dos elementos gerados dinamicamento dentro do modal
+        var prefixId = "elementoDinamico_";
+
+        // Remove os elementos que foram inseridos dinamicamente por outra chamada de método
+        $("[id^=" + prefixId + "]", $("#" + container)).remove();
+
+        // Limpa o html que foi inserido dinamicamente por outra chamada de método
+        $(".modal-body", $("#" + container)).html("");
+        $(".modal-header .modal-title", $("#" + container)).html("");
+
+        // Informa se o botão fechar, padrão do modal, deve ser ocultado
+        if (configuracoes.OcultarBotaoFechar) {
+            $("#btnCloseModal", $(".modal-footer")).hide();
+        }
+        else {
+            $("#btnCloseModal", $(".modal-footer")).show();
+        }
+
+        // Remove a classe do FullWidth
+        $("#" + container).removeClass("container");
+
+        if (configuracoes) {
+
+            // Html padrão do botão
+            var htmlBotao = '<button id="{0}" type="button" {3} class="btn {2}">{1}</button>';
+
+            // Se foi inserido um cabeçalho no modal o mesmo é exibido caso contrário o cabeçalho ficará oculto
+            if (configuracoes.TextoHeader) {
+                $(".modal-header .modal-title", $("#" + container)).html(configuracoes.TextoHeader);
+            }
+            else {
+                $(".modal-header .modal-title", $("#" + container)).html("Aviso");
+            }
+
+            if (configuracoes.FullWidth) {
+                $("#" + container).addClass("container");
+            }
+
+            // Html exibido no corpo do modal
+            $(".modal-body", $("#" + container)).html(configuracoes.CorpoModal);
+
+            // Se houver algum evento para o botão fechar entra nessa condição
+            if (configuracoes.EventoPadrao) {
+                $("#btnCloseModal").on("click", configuracoes.EventoPadrao);
+            }
+
+            // Se houver botões entra na condição
+            if (configuracoes.Botao) {
+
+                // Quantidade de botões adicionados
+                var qtdBotoes = configuracoes.Botao.length;
+
+                var modalFooter = $(".modal-footer");
+
+                for (var i = 0; i < qtdBotoes; i++) {
+                    // Cria o novo elemento no Html do modal
+                    modalFooter.prepend(
+                        `<button id=${prefixId + [i]} type="button" ${(configuracoes.Botao[i].FecharAposAcao) ? "data-dismiss='modal'" : ""} class="btn ${configuracoes.Botao[i].Class}">${configuracoes.Botao[i].Texto}</button>`
+                    );
+
+                    if (configuracoes.Botao[i].Evento) {
+
+                        /* 
+                        É necessário remover qualquer evento antes de adicionar um novo senão a mesma funcão será chamada "N" vezes
+                        também necessário passar explícitamente como parâmetro qual elemento será anexado o evento, pois isso garente
+                        que o evento será executado corretamente todas as vezes que o botão for acionado
+                        */
+                        $("body").off("click", "#" + prefixId + [i]).on("click", "#" + prefixId + [i], configuracoes.Botao[i].Evento);
+                    }
+
+                }
+            }
+        }
+
+        // Exibe o modal e inicializa as propriedades no construtor
+        $("#" + container).modal({
+            width: configuracoes.Largura,
+            height: configuracoes.Altura
+        });
+
+    };
+</script>
+
+</html>
